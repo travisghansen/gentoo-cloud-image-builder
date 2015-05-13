@@ -1,0 +1,15 @@
+{
+    "admin_pass": "123456",
+    "availability_zone": "nova",
+    "hostname": "test.novalocal",
+    "launch_index": 0,
+    "name": "test",
+    "meta": {
+        "role": "webservers",
+        "essential": "false"
+    },
+    "public_keys": {
+        "mykey": "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAnXCCFFYODq4Q/Xy2NxUqbFWPm3nvK6NZezdWQCDI5gJrHJ+w5+qemAQiLGZEVY0mfPrZk4bv/FUvJdF4ajq+QnFJ/nKAUQP0YI5QBQzAWWk4N8jLxBj9OjZ91tx9P3iV4qZ2V2gteQRQtnme6kojfgwajBhe1cFugkYEWVZIu08laixoUpq015j4JDt2bu0uiDbxG7XEze3kk5R23ynFWHOrYyaw7TD9ZuP4hI17PEcfhszDTBYbe8Dr/nDnogN9LLpDJftxxyoTbxhm86BDqVgBCfTGeq2g6hdpZsjf6CaanVSCc7BAlwg0ZMWVSEDYrrE9vg8X8pawuzy7G3ZueQ== thansen@e1405\n"
+    },
+    "uuid": "83679162-1378-4288-a2d4-70e13ec132aa"
+}

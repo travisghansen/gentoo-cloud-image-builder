@@ -1,0 +1,15 @@
+#!/bin/bash
+
+DEV=/dev/vda
+PART=1
+
+# expand partition
+parted -s "${DEV}" set "${PART}" boot on
+parted "${DEV}" resizepart "${PART}" Yes 100%
+partprobe -s "${DEV}"
+
+# resize filesystem
+resize2fs -p "${DEV}${PART}"
+
+# ensure we only run once
+chmod -x `realpath "${0}"`

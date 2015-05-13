@@ -1,0 +1,14 @@
+#!/bin/bash
+
+KC=/etc/kernels/kernel-config-cloud
+
+# backup current config
+cp -f "${KC}" "${KC}-$(date +%Y-%m--%d-%H-%m-%S)"
+
+genkernel --install --all-ramdisk-modules --e2fsprogs --disklabel --no-mountboot --kernel-config="${KC}" --menuconfig all && {
+    # copy most recent configs kernel in place for base next time
+    cp -f /usr/src/linux/.config "${KC}"
+    echo "rebuilding bootloader config"
+    /etc/kernel/postinst.d/rebuild-grub
+}
+

@@ -1,0 +1,9 @@
+/builder/builder.cfg
+/builder/builder.cfg.custom
+/builder/portage-*
+/builder/stage3-*
+
+/*.img
+/iso/*.iso
+
+/log/*.log
