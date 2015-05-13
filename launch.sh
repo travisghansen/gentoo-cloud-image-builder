@@ -77,12 +77,12 @@ main(){
     ./isogen.sh 
 
     qemu-system-x86_64 \
-        -enable-kvm -m 4096 -smp $(nproc) \
+        -enable-kvm -m "${QEMU_MEMORY:-512}" -smp $(nproc) \
         -drive file=gentoo.img,if=virtio,index=0 \
         -cdrom "iso/${ISO}" \
         -drive file="iso/builder.iso",media=cdrom \
         -drive file="iso/config.iso",media=cdrom \
-        -net nic,model=virtio -net user -vga cirrus -cpu host \
+        -net nic,model=virtio -net "${QEMU_NET_TYPE:-user}" -vga cirrus -cpu host \
         -chardev file,id=charserial0,path=log/console.log \
         -device isa-serial,chardev=charserial0,id=serial0 \
         -chardev pty,id=charserial1 \

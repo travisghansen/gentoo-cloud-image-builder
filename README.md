@@ -1,5 +1,5 @@
 # Intro
-gentoo-cloud-image-builder can be used to easily create openstack-compatible imaages
+Create gentoo openstack-compatible images
 
 # Use
 gentoo-cloud-image-builder is meant to be run from a qemu compatible host.  The high-level process includes booting a vm (using qemu) to the gentoo install cd/environment and subsequently automating a complete install.
@@ -34,9 +34,11 @@ Once you have a valid image you can upload to openstack:
 
 # TODO
  * disable root user / set random password / etc
+ * support hot-attaching volumes
  * more configurability to qemu options (memory, smp, etc)
  * grub serial device output?
  * app-emulation/openstack-guest-agents-unix?
  * make set/update hostname of cloud-init work with gentoo properly
  * kill hostname changes via dhcpcd
  * make use of growpart/growfs to do image growing (https://launchpad.net/cloud-utils)
+ * install/setup  bash completion

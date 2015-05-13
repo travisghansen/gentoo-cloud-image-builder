@@ -6,6 +6,10 @@ BASE_URL="http://distfiles.gentoo.org/releases/amd64/autobuilds/"
 #ISO="install-amd64-minimal-20150430.iso"
 #STAGE=stage3-amd64-20150507.tar.bz2
 #PORTAGE=portage-20150511.tar.bz2
+#QEMU_MEMORY="512"
+#QEMU_NET_TYPE="user"
+
+source config.cfg &> /dev/null
 
 
 if [ -z "${ISO}" -o ! -f "iso/${ISO}" ];then
