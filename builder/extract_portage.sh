@@ -3,4 +3,4 @@
 cd `dirname "${0}"`
 source builder.cfg
 
-tar -xvjpf "${PORTAGE}" -C /mnt/gentoo/usr/
+tar -xjpf "${PORTAGE}" -C /mnt/gentoo/usr/

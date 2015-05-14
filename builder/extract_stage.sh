@@ -3,4 +3,4 @@
 cd `dirname "${0}"`
 source builder.cfg
 
-tar -xvjpf "${STAGE}" -C /mnt/gentoo
+tar -xjpf "${STAGE}" -C /mnt/gentoo

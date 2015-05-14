@@ -5,10 +5,19 @@ source builder.cfg
 
 R="/mnt/gentoo"
 
+echo "creating partitions and formatting disk"
 ./disk_prep.sh
+
+echo "mounting root filesystem"
 ./mount_root.sh
+
+echo "extracting basa system"
 ./extract_stage.sh
+
+echo "mounting binds"
 ./mount_binds.sh
+
+echo "extracting portage"
 ./extract_portage.sh
 
 cp -f /etc/resolv.conf ${R}/etc
