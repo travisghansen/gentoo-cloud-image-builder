@@ -19,7 +19,7 @@ GRUB_DISTRIBUTOR="Gentoo"
 #GRUB_TIMEOUT_STYLE=menu
 
 # Append parameters to the linux kernel command line
-GRUB_CMDLINE_LINUX="net.ifnames=0 vga=791 console=tty0 console=ttyS0 doload=virtio_pci,virtio_blk,virtio_net"
+GRUB_CMDLINE_LINUX="net.ifnames=0 vga=791 doload=virtio_pci,virtio_blk,virtio_net console=ttyS0,115200 console=tty0 console=ttyS0,115200n8 vconsole.font=latarcyrheb-sun16 crashkernel=auto  vconsole.keymap=us"
 #
 # Examples:
 #
@@ -33,7 +33,8 @@ GRUB_CMDLINE_LINUX="net.ifnames=0 vga=791 console=tty0 console=ttyS0 doload=virt
 #GRUB_CMDLINE_LINUX_DEFAULT=""
 
 # Uncomment to disable graphical terminal (grub-pc only)
-#GRUB_TERMINAL=serial
+GRUB_TERMINAL="serial console"
+GRUB_SERIAL_COMMAND="serial --speed=115200"
 #GRUB_SERIAL_COMMAND="serial --speed=115200 --unit=0 --word=8 --parity=no --stop=1"
 
 # The resolution used on graphical terminal.
@@ -67,7 +68,7 @@ GRUB_CMDLINE_LINUX="net.ifnames=0 vga=791 console=tty0 console=ttyS0 doload=virt
 # the top-level menu.
 # Besides the visual affect of no sub menu, this makes navigation of the
 # menu easier for a user who can't see the screen.
-#GRUB_DISABLE_SUBMENU=y
+GRUB_DISABLE_SUBMENU=y
 
 # Uncomment to play a tone when the main menu is displayed.
 # This is useful, for example, to allow users who can't see the screen

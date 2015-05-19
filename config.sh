@@ -8,6 +8,7 @@ BASE_URL="http://distfiles.gentoo.org/releases/amd64/autobuilds/"
 #PORTAGE=portage-20150511.tar.bz2
 #QEMU_MEMORY="512"
 #QEMU_NET_TYPE="user"
+#GENKERNEL_OPTIONS=""
 
 source config.cfg &> /dev/null
 
@@ -73,3 +74,4 @@ echo "PORTAGE=\"${PORTAGE}\"" >> builder/builder.cfg
 echo "STAGE=\"${STAGE}\"" >> builder/builder.cfg
 echo "DEV=\"/dev/vda\"" >> builder/builder.cfg
 echo "PART=\"/dev/vda1\"" >> builder/builder.cfg
+echo "GENKERNEL_OPTIONS=\"${GENKERNEL_OPTIONS}\"" >> builder/builder.cfg

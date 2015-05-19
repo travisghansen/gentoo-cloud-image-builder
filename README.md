@@ -33,12 +33,27 @@ Once you have a valid image you can upload to openstack:
 ```glance image-create --name 'gentoo (20150507) x86_64' --disk-format qcow2 --container-format bare --is-public true --file gentoo.img --progress```
 
 # TODO
- * disable root user / set random password / etc
- * support hot-attaching volumes
- * more configurability to qemu options (memory, smp, etc)
- * grub serial device output?
- * app-emulation/openstack-guest-agents-unix?
  * make set/update hostname of cloud-init work with gentoo properly
  * kill hostname changes via dhcpcd
+ * app-emulation/openstack-guest-agents-unix?
  * make use of growpart/growfs to do image growing (https://launchpad.net/cloud-utils)
  * install/setup  bash completion
+
+# Kernel
+ * memory compaction/hotplug
+ * namespaces/cgroups (for docker)
+ * iptables/networking options
+ * hugetlb?
+ * ecrypt
+ * mdraid
+ * non-module virtio support
+ * drbd
+ * cirrus/hyper-v/qxl/etc graphics
+ * disk hotplug: CONFIG_HOTPLUG=y CONFIG_ACPI_HOTPLUG_CPU=y CONFIG_HOTPLUG_PCI=y
+
+# LINKS
+ * http://terrarum.net/blog/creating-a-gentoo-cloud-image.html
+ * http://blog.condi.me/base/
+ * http://blog.david-jung.net/post/25402391612/testing-cloud-init-forcing-re-run-of-user
+ * http://docs.openstack.org/image-guide/content/ch_openstack_images.html
+ * https://wiki.ubuntu.com/QemuDiskHotplug

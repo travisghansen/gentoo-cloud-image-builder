@@ -41,10 +41,14 @@ else
     cp -f /etc/kernels/kernel-config-* ${R}/etc/kernels/kernel-config-cloud
 fi
 
-cp -f ${R}/etc/kernels/kernel-config-cloud ${R}/etc/kernels/kernel-config-cloud-original
-
 echo "building and installing kernel"
-chroot_exec "genkernel --install --all-ramdisk-modules --e2fsprogs --disklabel --no-mountboot --kernel-config=/etc/kernels/kernel-config-cloud all"
+chroot_exec "genkernel --install --all-ramdisk-modules --e2fsprogs --disklabel --no-mountboot --kernel-config=/etc/kernels/kernel-config-cloud ${GENKERNEL_OPTIONS} all"
+
+# in case any adjustments are made via menuconfig etc
+cp -f ${R}/usr/src/linux/.config ${R}/etc/kernels/kernel-config-cloud
+
+# keep the original around for safe keeping
+cp -f ${R}/etc/kernels/kernel-config-cloud ${R}/etc/kernels/kernel-config-cloud-original
 
 # install grub to the MBR
 chroot_exec "grub2-install ${DEV}"
@@ -87,7 +91,9 @@ chmod 755 ${R}/etc/local.d/resize_root.start
 cp -f cloud.cfg ${R}/etc/cloud/
 chmod 644 ${R}/etc/cloud/cloud.cfg
 
-# TODO: any passwd etc changes for root user
+# properly read set hostname
+cp -f hostname ${R}/etc/conf.d/
+chmod 644 ${R}/etc/conf.d/hostname
 
 # create a genkernel script for updating to new kernels manually
 cp -f genkernel-cloud ${R}/usr/bin/
@@ -97,5 +103,7 @@ cp -f rebuild-grub ${R}/etc/kernel/postinst.d/
 chmod 755 ${R}/etc/kernel/postinst.d/rebuild-grub
 
 # TODO: cleanup
+echo "final cleanup"
+chroot_exec "eselect news read &>/dev/null"
 rm -rf ${R}/usr/portage/distfiles/*
 rm -rf ${R}/etc/resolv.conf
