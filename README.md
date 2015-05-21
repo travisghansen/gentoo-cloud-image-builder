@@ -28,16 +28,17 @@ At this point kick back and relax.  Your image will be ready shortly.  Once ever
 ```./launch.sh -t test```
 
 # Upload to Openstack
+You may shrink the image by using virt-sparify
+
+```virt-sparsify --compress gentoo.img gentoo-$(date +%Y-%m-%d).img```
+
 Once you have a valid image you can upload to openstack:
 
 ```glance image-create --name 'gentoo (20150507) x86_64' --disk-format qcow2 --container-format bare --is-public true --file gentoo.img --progress```
 
 # TODO
- * make set/update hostname of cloud-init work with gentoo properly
- * kill hostname changes via dhcpcd
  * app-emulation/openstack-guest-agents-unix?
  * make use of growpart/growfs to do image growing (https://launchpad.net/cloud-utils)
- * install/setup  bash completion
 
 # Kernel
  * memory compaction/hotplug

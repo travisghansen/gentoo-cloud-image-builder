@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# silence all output
+exec > /dev/null 2>&1
+
 DEV=/dev/vda
 PART=1
 
@@ -10,6 +13,3 @@ partprobe -s "${DEV}"
 
 # resize filesystem
 resize2fs -p "${DEV}${PART}"
-
-# ensure we only run once
-chmod -x `realpath "${0}"`

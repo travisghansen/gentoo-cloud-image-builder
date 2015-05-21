@@ -1,5 +1,0 @@
-#!/bin/bash
-
-mount /boot 2> /dev/null
-
-grub2-mkconfig -o /boot/grub/grub.cfg

@@ -68,6 +68,8 @@ main(){
         opts="-boot d"
     elif [ "x${launch_type}" == "xtest" ];then
         opts="-snapshot"
+    elif [ "x${launch_type}" == "xplayground" ];then
+        opts=""
     else
         usage
         exit 1

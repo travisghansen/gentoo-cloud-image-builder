@@ -1,6 +1,0 @@
-# Set to the hostname of this machine
-if [ -f /etc/hostname ];then
-    hostname="$(cat /etc/hostname)"
-else
-    hostname="localhost"
-fi

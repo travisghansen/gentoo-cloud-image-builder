@@ -9,6 +9,7 @@ chroot_exec() {
 }
 
 R="/mnt/gentoo"
+K="/usr/src/linux"
 
 echo "creating partitions and formatting disk"
 ./disk_prep.sh
@@ -28,24 +29,27 @@ echo "extracting portage"
 cp -f /etc/resolv.conf ${R}/etc
 
 # install standard packages
-echo "installing base packages"
-chroot_exec 'emerge --jobs=2 --keep-going genkernel acpid syslog-ng cronie dhcpcd mlocate xfsprogs dosfstools grub sudo postfix cloud-init vim gentoo-sources linux-firmware parted portage-utils gentoolkit'
+echo "installing packages"
+chroot_exec "emerge --jobs=2 --keep-going ${EMERGE_BASE_PACKAGES} ${EMERGE_EXTRA_PACKAGES}"
 
 # build and install kernel/initrd
-# TODO: get a better (more lean) kernel config
-# TODO: add --virtio to genkernel if it ever starts working
 mkdir -p ${R}/etc/kernels/
 if [ -f kernel-config ];then
     cp -f kernel-config ${R}/etc/kernels/kernel-config-cloud
-else
-    cp -f /etc/kernels/kernel-config-* ${R}/etc/kernels/kernel-config-cloud
 fi
 
+# copy config in place
+cp -f ${R}/etc/kernels/kernel-config-cloud ${R}/usr/src/linux/.config
+
 echo "building and installing kernel"
-chroot_exec "genkernel --install --all-ramdisk-modules --e2fsprogs --disklabel --no-mountboot --kernel-config=/etc/kernels/kernel-config-cloud ${GENKERNEL_OPTIONS} all"
+if [ "x${KERNEL_CONFIGURE}" = "x1" ];then
+    chroot_exec "cd ${K}; make nconfig;"
+fi
+
+chroot_exec "cd ${K}; make ${KERNEL_MAKE_OPTS}; make modules_install; make install;"
 
 # in case any adjustments are made via menuconfig etc
-cp -f ${R}/usr/src/linux/.config ${R}/etc/kernels/kernel-config-cloud
+cp -f ${R}/${K}/.config ${R}/etc/kernels/kernel-config-cloud
 
 # keep the original around for safe keeping
 cp -f ${R}/etc/kernels/kernel-config-cloud ${R}/etc/kernels/kernel-config-cloud-original
@@ -54,7 +58,6 @@ cp -f ${R}/etc/kernels/kernel-config-cloud ${R}/etc/kernels/kernel-config-cloud-
 chroot_exec "grub2-install ${DEV}"
 
 # copy /etc/default/grub
-# TODO: send grub to serial console?
 cp -f grub ${R}/etc/default/grub
 chmod 644 ${R}/etc/default/grub
 
@@ -68,9 +71,13 @@ sed -i 's/^#s1:/s1:/g' ${R}/etc/inittab
 # create init script for net.eth0
 chroot_exec "cd /etc/init.d/; ln -sf net.lo net.eth0"
 
-# enable standard services
+# enable default services
 for service in acpid syslog-ng cronie net.eth0 sshd cloud-init-local cloud-init cloud-config cloud-final;do
     chroot_exec "rc-update add ${service} default"
+done
+
+for service in base gentoo;do
+    chroot_exec "eselect bashcomp enable --global ${service}"
 done
 
 # ensure eth0 style nic naming
@@ -90,17 +97,6 @@ chmod 755 ${R}/etc/local.d/resize_root.start
 # copy cloud-init config into place
 cp -f cloud.cfg ${R}/etc/cloud/
 chmod 644 ${R}/etc/cloud/cloud.cfg
-
-# properly read set hostname
-cp -f hostname ${R}/etc/conf.d/
-chmod 644 ${R}/etc/conf.d/hostname
-
-# create a genkernel script for updating to new kernels manually
-cp -f genkernel-cloud ${R}/usr/bin/
-chmod 755 ${R}/usr/bin/genkernel-cloud
-
-cp -f rebuild-grub ${R}/etc/kernel/postinst.d/
-chmod 755 ${R}/etc/kernel/postinst.d/rebuild-grub
 
 # TODO: cleanup
 echo "final cleanup"

@@ -8,7 +8,11 @@ BASE_URL="http://distfiles.gentoo.org/releases/amd64/autobuilds/"
 #PORTAGE=portage-20150511.tar.bz2
 #QEMU_MEMORY="512"
 #QEMU_NET_TYPE="user"
-#GENKERNEL_OPTIONS=""
+#KERNEL_CONFIGURE="0"
+#KERNEL_MAKE_OPTS=""
+#EMERGE_EXTRA_PACKAGES
+
+EMERGE_BASE_PACKAGES="acpid syslog-ng cronie dhcpcd mlocate xfsprogs dosfstools grub sudo postfix cloud-init vim gentoo-sources linux-firmware parted portage-utils gentoolkit gentoo-bashcomp eix tmux app-misc/screen dev-vcs/git net-misc/curl usbutils pciutils logrotate"
 
 source config.cfg &> /dev/null
 
@@ -74,4 +78,7 @@ echo "PORTAGE=\"${PORTAGE}\"" >> builder/builder.cfg
 echo "STAGE=\"${STAGE}\"" >> builder/builder.cfg
 echo "DEV=\"/dev/vda\"" >> builder/builder.cfg
 echo "PART=\"/dev/vda1\"" >> builder/builder.cfg
-echo "GENKERNEL_OPTIONS=\"${GENKERNEL_OPTIONS}\"" >> builder/builder.cfg
+echo "KERNEL_CONFIGURE=\"${KERNEL_CONFIGURE}\"" >> builder/builder.cfg
+echo "KERNEL_MAKE_OPTS=\"${KERNEL_MAKE_OPTS}\"" >> builder/builder.cfg
+echo "EMERGE_BASE_PACKAGES=\"${EMERGE_BASE_PACKAGES}\"" >> builder/builder.cfg
+echo "EMERGE_EXTRA_PACKAGES=\"${EMERGE_EXTRA_PACKAGES}\"" >> builder/builder.cfg

@@ -19,7 +19,8 @@ GRUB_DISTRIBUTOR="Gentoo"
 #GRUB_TIMEOUT_STYLE=menu
 
 # Append parameters to the linux kernel command line
-GRUB_CMDLINE_LINUX="net.ifnames=0 vga=791 doload=virtio_pci,virtio_blk,virtio_net console=ttyS0,115200 console=tty0 console=ttyS0,115200n8 vconsole.font=latarcyrheb-sun16 crashkernel=auto  vconsole.keymap=us"
+# openrc only spits to the last console=tty
+GRUB_CMDLINE_LINUX="net.ifnames=0 vga=791 console=tty0 console=ttyS0,115200"
 #
 # Examples:
 #
