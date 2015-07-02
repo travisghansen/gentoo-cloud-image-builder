@@ -76,13 +76,26 @@ for service in acpid syslog-ng cronie net.eth0 sshd cloud-init-local cloud-init 
     chroot_exec "rc-update add ${service} default"
 done
 
-for service in base gentoo;do
-    chroot_exec "eselect bashcomp enable --global ${service}"
-done
-
 # ensure eth0 style nic naming
 chroot_exec "ln -sf /dev/null /etc/udev/rules.d/70-persistent-net.rules"
 chroot_exec "ln -sf /dev/null /etc/udev/rules.d/80-net-setup-link.rules"
+
+# timezone
+# chroot_exec "echo 'UTC' > /etc/timezone"
+
+# locale
+#chroot_exec "echo 'en_US.UTF-8 UTF-8' >> /etc/locale.gen"
+#chroot_exec "echo 'en_US ISO-8859-1' >> /etc/locale.gen"
+#chroot_exec "locale-gen"
+chroot_exec "eselect locale set en_US.utf8"
+
+# sysctl
+# This is set in rackspaces prep, might help us
+chroot_exec "echo 'net.ipv4.conf.eth0.arp_notify = 1' >> /etc/sysctl.d/cloud.conf"
+chroot_exec "echo 'vm.swappiness = 0' >> /etc/sysctl.d/cloud.conf"
+
+# let ipv6 use normal slaac
+chroot_exec "sed -i 's/slaac/#slaac/g' /etc/dhcpcd.conf"
 
 # generate fstab
 FS_UUID=$(blkid "${PART}" | cut -d " " -f2)
@@ -101,5 +114,7 @@ chmod 644 ${R}/etc/cloud/cloud.cfg
 # TODO: cleanup
 echo "final cleanup"
 chroot_exec "eselect news read &>/dev/null"
+chroot_exec "eix-update"
+chroot_exec "emaint all -f"
 rm -rf ${R}/usr/portage/distfiles/*
 rm -rf ${R}/etc/resolv.conf

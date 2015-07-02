@@ -52,9 +52,46 @@ Once you have a valid image you can upload to openstack:
  * cirrus/hyper-v/qxl/etc graphics
  * disk hotplug: CONFIG_HOTPLUG=y CONFIG_ACPI_HOTPLUG_CPU=y CONFIG_HOTPLUG_PCI=y
 
+```
+cirrus
+ttm
+ppdev
+drm_kms_helper
+parport_pc
+serio_raw
+ghash_clmulni_intel
+parport
+i2c_piix4
+ata_generic
+pata_acpi
+
+piix4_smbus
+
+imexps/s
+
+ACPI PCI Interrupt Link LNKC
+LNKA
+hid-generic
+tsc
+mousedev
+usbcore
+usbserial
+serio
+i8042
+libphy
+ata_piix
+pci_hotplug
+pciehp
+intel_idle
+tsc
+uhci_hcd
+i2c_piix4
+virtio-pci
+```
 # LINKS
  * http://terrarum.net/blog/creating-a-gentoo-cloud-image.html
  * http://blog.condi.me/base/
  * http://blog.david-jung.net/post/25402391612/testing-cloud-init-forcing-re-run-of-user
  * http://docs.openstack.org/image-guide/content/ch_openstack_images.html
  * https://wiki.ubuntu.com/QemuDiskHotplug
+ * https://github.com/prometheanfire/gentoo-cloud-prep
