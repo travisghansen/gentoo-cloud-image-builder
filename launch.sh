@@ -89,7 +89,8 @@ main(){
         -device isa-serial,chardev=charserial0,id=serial0 \
         -chardev pty,id=charserial1 \
         -device isa-serial,chardev=charserial1,id=serial1 \
-        ${opts}
+        ${opts} \
+        $QEMU_EXTRA_OPTS
 
 }
 
