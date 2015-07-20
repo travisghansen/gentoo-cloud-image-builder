@@ -1,0 +1,6 @@
+# Set to the hostname of this machine
+if [ -f /etc/hostname ];then
+    hostname=$(cat /etc/hostname 2> /dev/null | cut -d"." -f1 2> /dev/null)
+else
+    hostname="localhost"
+fi

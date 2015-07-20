@@ -46,7 +46,7 @@ if [ "x${KERNEL_CONFIGURE}" = "x1" ];then
     chroot_exec "cd ${K}; make nconfig;"
 fi
 
-chroot_exec "cd ${K}; make ${KERNEL_MAKE_OPTS}; make modules_install; make install;"
+chroot_exec "cd ${K}; make ${KERNEL_MAKE_OPTS}; make modules_install; make install; make clean;"
 
 # in case any adjustments are made via menuconfig etc
 cp -f ${R}/${K}/.config ${R}/etc/kernels/kernel-config-cloud
@@ -97,6 +97,13 @@ chroot_exec "echo 'vm.swappiness = 0' >> /etc/sysctl.d/cloud.conf"
 # let ipv6 use normal slaac
 chroot_exec "sed -i 's/slaac/#slaac/g' /etc/dhcpcd.conf"
 
+# remove domain_name and host_name from dhcp options to allow cloud-init to better control hostname
+chroot_exec "sed -i 's/domain_name\,\ domain_search\,\ host_name/domain_search/g' /etc/dhcpcd.conf"
+
+# by default read /etc/hostname as set by cloud-init
+cp -f hostname ${R}/etc/conf.d/
+chmod 644 ${R}/etc/conf.d/hostname
+
 # generate fstab
 FS_UUID=$(blkid "${PART}" | cut -d " " -f2)
 cat > ${R}/etc/fstab << EOF
@@ -106,6 +113,10 @@ EOF
 # copy cloud-init config into place
 cp -f cloud.cfg ${R}/etc/cloud/
 chmod 644 ${R}/etc/cloud/cloud.cfg
+
+# eventually cloud-init will install this file
+cp -f hosts.gentoo.tmpl ${R}/etc/cloud/templates/
+chmod 644 ${R}/etc/cloud/templates/hosts.gentoo.tmpl
 
 # copy in growpart from cloud-utils package
 cp -f growpart ${R}/usr/bin/
