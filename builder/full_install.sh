@@ -103,13 +103,13 @@ cat > ${R}/etc/fstab << EOF
 ${FS_UUID}      /       ext4        defaults,noatime,user_xattr 0 1
 EOF
 
-# copy fs/partition grow
-cp -f resize_root.start ${R}/etc/local.d
-chmod 755 ${R}/etc/local.d/resize_root.start
-
 # copy cloud-init config into place
 cp -f cloud.cfg ${R}/etc/cloud/
 chmod 644 ${R}/etc/cloud/cloud.cfg
+
+# copy in growpart from cloud-utils package
+cp -f growpart ${R}/usr/bin/
+chmod 755 ${R}/usr/bin/growpart
 
 # TODO: cleanup
 echo "final cleanup"

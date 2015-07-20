@@ -38,7 +38,7 @@ Once you have a valid image you can upload to openstack:
 
 # TODO
  * app-emulation/openstack-guest-agents-unix?
- * make use of growpart/growfs to do image growing (https://launchpad.net/cloud-utils)
+ * remove /usr/src? remove /usr/portage?  the both combined make up 2GB (out of 3GB) of the resultant image
 
 # Kernel
  * memory compaction/hotplug
@@ -51,6 +51,7 @@ Once you have a valid image you can upload to openstack:
  * drbd
  * cirrus/hyper-v/qxl/etc graphics
  * disk hotplug: CONFIG_HOTPLUG=y CONFIG_ACPI_HOTPLUG_CPU=y CONFIG_HOTPLUG_PCI=y
+ * ensure SYSFS deprecated features are not enabled
 
 ```
 cirrus
