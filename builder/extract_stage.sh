@@ -3,4 +3,4 @@
 cd `dirname "${0}"`
 source builder.cfg
 
-tar -xjpf "${STAGE}" -C /mnt/gentoo
+tar xpf "${STAGE}" --xattrs-include='*.*' --numeric-owner -C /mnt/gentoo

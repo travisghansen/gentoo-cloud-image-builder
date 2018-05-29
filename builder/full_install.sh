@@ -44,6 +44,8 @@ cp -f ${R}/etc/kernels/kernel-config-cloud ${R}/usr/src/linux/.config
 echo "building and installing kernel"
 if [ "x${KERNEL_CONFIGURE}" = "x1" ];then
     chroot_exec "cd ${K}; make nconfig;"
+else
+    chroot_exec "cd ${K}; make olddefconfig;"
 fi
 
 chroot_exec "cd ${K}; make ${KERNEL_MAKE_OPTS}; make modules_install; make install; make clean;"
@@ -55,14 +57,14 @@ cp -f ${R}/${K}/.config ${R}/etc/kernels/kernel-config-cloud
 cp -f ${R}/etc/kernels/kernel-config-cloud ${R}/etc/kernels/kernel-config-cloud-original
 
 # install grub to the MBR
-chroot_exec "grub2-install ${DEV}"
+chroot_exec "grub-install ${DEV}"
 
 # copy /etc/default/grub
 cp -f grub ${R}/etc/default/grub
 chmod 644 ${R}/etc/default/grub
 
 # generate grub.cfg
-chroot_exec "grub2-mkconfig -o /boot/grub/grub.cfg"
+chroot_exec "grub-mkconfig -o /boot/grub/grub.cfg"
 
 # enable serial console
 sed -i 's/^#s0:/s0:/g' ${R}/etc/inittab
@@ -117,10 +119,6 @@ chmod 644 ${R}/etc/cloud/cloud.cfg
 # eventually cloud-init will install this file
 cp -f hosts.gentoo.tmpl ${R}/etc/cloud/templates/
 chmod 644 ${R}/etc/cloud/templates/hosts.gentoo.tmpl
-
-# copy in growpart from cloud-utils package
-cp -f growpart ${R}/usr/bin/
-chmod 755 ${R}/usr/bin/growpart
 
 # TODO: cleanup
 echo "final cleanup"
