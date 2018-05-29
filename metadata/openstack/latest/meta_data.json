@@ -1,5 +1,5 @@
 {
-    "admin_pass": "123456",
+    "admin_pass": "root",
     "availability_zone": "nova",
     "hostname": "test.novalocal",
     "launch_index": 0,

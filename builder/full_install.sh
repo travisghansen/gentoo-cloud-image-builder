@@ -17,7 +17,7 @@ echo "creating partitions and formatting disk"
 echo "mounting root filesystem"
 ./mount_root.sh
 
-echo "extracting basa system"
+echo "extracting base system"
 ./extract_stage.sh
 
 echo "mounting binds"
