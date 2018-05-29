@@ -28,6 +28,10 @@ echo "extracting portage"
 
 cp -f /etc/resolv.conf ${R}/etc
 
+# cleanup bindist issues
+echo "installing packages (bindist)"
+chroot_exec "emerge --keep-going openssh"
+
 # install standard packages
 echo "installing packages"
 chroot_exec "emerge --jobs=2 --keep-going ${EMERGE_BASE_PACKAGES} ${EMERGE_EXTRA_PACKAGES}"
