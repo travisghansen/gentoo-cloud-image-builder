@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 cd `dirname "${0}"`
 source builder.cfg
 
@@ -7,6 +9,6 @@ source builder.cfg
 # http://honglus.blogspot.com/2013/06/script-to-automatically-partition-new.html
 parted -s "${DEV}" mklabel msdos
 parted -s "${DEV}" mkpart primary 2048s 100%
-partprobe > /dev/null 2>&1
+partprobe > /dev/null 2>&1 || true
 
 mkfs.ext4 -FF "${PART}"

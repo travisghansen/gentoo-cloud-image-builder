@@ -1,5 +1,9 @@
 #!/bin/bash
 
+
+set -e
+#set -x
+
 BASE_URL="http://distfiles.gentoo.org/releases/amd64/autobuilds/"
 
 #IMG="gentoo.img"
@@ -12,14 +16,21 @@ BASE_URL="http://distfiles.gentoo.org/releases/amd64/autobuilds/"
 #KERNEL_MAKE_OPTS=""
 #EMERGE_EXTRA_PACKAGES
 
-EMERGE_BASE_PACKAGES="acpid dmidecode syslog-ng cronie dhcpcd mlocate xfsprogs dosfstools grub sudo postfix cloud-init vim gentoo-sources linux-firmware parted portage-utils gentoolkit bash-completion gentoo-bashcomp eix tmux app-misc/screen dev-vcs/git net-misc/curl usbutils pciutils logrotate gptfdisk sys-block/gpart"
+: ${KERNEL_MAKE_OPTS:=-j$(nproc)}
+# TODO: make sure this rounds up to an int
+#: ${EMERGE_JOB_COUNT:=$(($(nproc) / 4 ))}
+: ${EMERGE_JOB_COUNT:=-4}
+: ${EMERGE_MAKEOPTS:=-j$(nproc)}
 
-source config.cfg &> /dev/null
+EMERGE_BASE_PACKAGES="acpid dmidecode syslog-ng cronie dhcpcd mlocate xfsprogs dosfstools grub sudo postfix cloud-init vim gentoo-sources linux-firmware parted portage-utils gentoolkit bash-completion gentoo-bashcomp eix tmux app-misc/screen dev-vcs/git net-misc/curl usbutils pciutils logrotate gptfdisk sys-block/gpart net-misc/ntp net-fs/nfs-utils sys-block/open-iscsi"
 
+if [[ -f "config.cfg" ]];then
+  source config.cfg &> /dev/null
+fi
 
 if [ -z "${ISO}" -o ! -f "iso/${ISO}" ];then
     OUTPUT=$(curl "${BASE_URL}latest-install-amd64-minimal.txt" 2> /dev/null)
-    CURRENT=$(echo "${OUTPUT}" | sed -e 's/#.*$//' -e '/^$/d' | cut -d ' ' -f1)
+    CURRENT=$(echo "${OUTPUT}" | grep -m 1 "\.iso" | cut -d ' ' -f1)
     ISO=$(echo "${CURRENT}" | cut -d '/' -f2)
 
     if [ -f "iso/${ISO}" ];then
@@ -34,8 +45,8 @@ fi
 
 
 if [ -z "${STAGE}" -o ! -f "builder/${STAGE}" ];then
-    OUTPUT=$(curl "${BASE_URL}latest-stage3-amd64.txt" 2> /dev/null)
-    CURRENT=$(echo "${OUTPUT}" | sed -e 's/#.*$//' -e '/^$/d' | cut -d ' ' -f1)
+    OUTPUT=$(curl "${BASE_URL}latest-stage3-amd64-openrc.txt" 2> /dev/null)
+    CURRENT=$(echo "${OUTPUT}" | grep -E '^[0-9]{8,8}' | cut -d ' ' -f1)
     STAGE=$(echo "${CURRENT}" | cut -d '/' -f2)
 
     if [ -f "builder/${STAGE}" ];then
@@ -58,7 +69,8 @@ if [ -z "${PORTAGE}" ];then
     else
         :
         echo "downloading current portage ${PORTAGE}"
-        curl -o "builder/${PORTAGE}" "http://distfiles.gentoo.org/releases/snapshots/current/${PORTAGE}";
+        #curl -o "builder/${PORTAGE}" "http://distfiles.gentoo.org/releases/snapshots/current/${PORTAGE}";
+        curl -o "builder/${PORTAGE}" "http://distfiles.gentoo.org/snapshots/${PORTAGE}";
     fi
 fi
 
@@ -80,5 +92,7 @@ echo "DEV=\"/dev/vda\"" >> builder/builder.cfg
 echo "PART=\"/dev/vda1\"" >> builder/builder.cfg
 echo "KERNEL_CONFIGURE=\"${KERNEL_CONFIGURE}\"" >> builder/builder.cfg
 echo "KERNEL_MAKE_OPTS=\"${KERNEL_MAKE_OPTS}\"" >> builder/builder.cfg
+echo "EMERGE_JOB_COUNT=\"${EMERGE_JOB_COUNT}\"" >> builder/builder.cfg
+echo "EMERGE_MAKEOPTS=\"${EMERGE_MAKEOPTS}\"" >> builder/builder.cfg
 echo "EMERGE_BASE_PACKAGES=\"${EMERGE_BASE_PACKAGES}\"" >> builder/builder.cfg
 echo "EMERGE_EXTRA_PACKAGES=\"${EMERGE_EXTRA_PACKAGES}\"" >> builder/builder.cfg

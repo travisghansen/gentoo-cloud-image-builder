@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# typically only executes on first boot
+
+echo "############# user_data executing ##############"
+
+#echo 'gentoo:warp!visit&Animal' | chpasswd
+#grep gentoo /etc/shadow
+
+# openssl passwd gentoo
+# openssl passwd -1 gentoo
+usermod --password '$1$zwJ43iye$EkLhEzheor1Ao104WHvFM1' gentoo
+
+# unlock account
+passwd -u gentoo
+
+#grep gentoo /etc/shadow
+#cat /etc/passwd
+

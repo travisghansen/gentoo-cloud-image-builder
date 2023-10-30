@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 cd `dirname "${0}"`
 source builder.cfg
 
@@ -26,7 +28,25 @@ echo "mounting binds"
 echo "extracting portage"
 ./extract_portage.sh
 
-cp -f /etc/resolv.conf ${R}/etc
+echo "setting licenses"
+echo 'ACCEPT_LICENSE="-* @FREE @BINARY-REDISTRIBUTABLE"' >> ${R}/etc/portage/make.conf
+
+echo "copying repos.conf"
+mkdir --parents ${R}/etc/portage/repos.conf
+cp /mnt/gentoo/usr/share/portage/config/repos.conf /mnt/gentoo/etc/portage/repos.conf/gentoo.conf
+
+echo "preparing portage env files"
+mkdir --parents ${R}/etc/portage/env
+echo 'MAKEOPTS="-j1"' >> ${R}/etc/portage/env/singlejob.conf
+echo 'app-portage/eix singlejob.conf' >> ${R}/etc/portage/package.env
+echo 'dev-util/maturin singlejob.conf' >> ${R}/etc/portage/package.env
+echo 'dev-util/cmake singlejob.conf' >> ${R}/etc/portage/package.env
+
+echo "copying resolv.conf"
+cp --dereference /etc/resolv.conf ${R}/etc
+
+echo "updating portage"
+chroot_exec "emerge --sync"
 
 # cleanup bindist issues
 echo "installing packages (bindist)"
@@ -34,13 +54,17 @@ chroot_exec "emerge --keep-going openssh"
 
 # install standard packages
 echo "installing packages"
-chroot_exec "emerge --jobs=2 --keep-going ${EMERGE_BASE_PACKAGES} ${EMERGE_EXTRA_PACKAGES}"
+chroot_exec "emerge --jobs=${EMERGE_JOB_COUNT} --keep-going ${EMERGE_BASE_PACKAGES} ${EMERGE_EXTRA_PACKAGES}"
 
 # build and install kernel/initrd
 mkdir -p ${R}/etc/kernels/
 if [ -f kernel-config ];then
     cp -f kernel-config ${R}/etc/kernels/kernel-config-cloud
 fi
+
+chroot_exec "eselect kernel list"
+chroot_exec "eselect kernel set 1"
+chroot_exec "eselect kernel show"
 
 # copy config in place
 cp -f ${R}/etc/kernels/kernel-config-cloud ${R}/usr/src/linux/.config
@@ -78,7 +102,7 @@ sed -i 's/^#s1:/s1:/g' ${R}/etc/inittab
 chroot_exec "cd /etc/init.d/; ln -sf net.lo net.eth0"
 
 # enable default services
-for service in acpid syslog-ng cronie net.eth0 sshd cloud-init-local cloud-init cloud-config cloud-final;do
+for service in acpid syslog-ng cronie net.eth0 sshd cloud-init-local cloud-init cloud-config cloud-final ntpd nfsclient netmount iscsid;do
     chroot_exec "rc-update add ${service} default"
 done
 
@@ -87,18 +111,24 @@ chroot_exec "ln -sf /dev/null /etc/udev/rules.d/70-persistent-net.rules"
 chroot_exec "ln -sf /dev/null /etc/udev/rules.d/80-net-setup-link.rules"
 
 # timezone
-# chroot_exec "echo 'UTC' > /etc/timezone"
+chroot_exec "echo 'UTC' > /etc/timezone"
+chroot_exec "emerge --config sys-libs/timezone-data"
 
 # locale
-#chroot_exec "echo 'en_US.UTF-8 UTF-8' >> /etc/locale.gen"
-#chroot_exec "echo 'en_US ISO-8859-1' >> /etc/locale.gen"
-#chroot_exec "locale-gen"
+chroot_exec "echo 'en_US.UTF-8 UTF-8' >> /etc/locale.gen"
+chroot_exec "echo 'en_US ISO-8859-1' >> /etc/locale.gen"
+chroot_exec "locale-gen"
 chroot_exec "eselect locale set en_US.utf8"
+chroot_exec "env-update && source /etc/profile"
 
 # sysctl
 # This is set in rackspaces prep, might help us
 chroot_exec "echo 'net.ipv4.conf.eth0.arp_notify = 1' >> /etc/sysctl.d/cloud.conf"
 chroot_exec "echo 'vm.swappiness = 0' >> /etc/sysctl.d/cloud.conf"
+
+# modules
+chroot_exec "mkdir -p /etc/modules-load.d/"
+cp -f modules-cloud.conf ${R}/etc/modules-load.d/cloud.conf
 
 # let ipv6 use normal slaac
 chroot_exec "sed -i 's/slaac/#slaac/g' /etc/dhcpcd.conf"

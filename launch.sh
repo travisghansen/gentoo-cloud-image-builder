@@ -85,12 +85,12 @@ main(){
     fi
 
     qemu-system-x86_64 \
-        -enable-kvm -m "${QEMU_MEMORY:-512}" -smp $(nproc) \
+        -enable-kvm -m "${QEMU_MEMORY:-4096}" -smp $(nproc) \
         -drive file=${IMG},if=virtio,index=0 \
         -cdrom "iso/${ISO}" \
         -drive file="iso/builder.iso",media=cdrom \
         -drive file="iso/config.iso",media=cdrom \
-        -net nic,model=virtio -net "${QEMU_NET_TYPE:-user}" -vga cirrus -cpu host \
+        -net nic,model=virtio -net "${QEMU_NET_TYPE:-user}" -vga ${QEMU_VGA:-virtio} -cpu ${QEMU_CPU:-host} \
         -chardev file,id=charserial0,path=log/console.log \
         -device isa-serial,chardev=charserial0,id=serial0 \
         -chardev pty,id=charserial1 \

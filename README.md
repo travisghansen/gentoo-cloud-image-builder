@@ -13,11 +13,18 @@ In order to build an image you simply need to clone the repo and ensure you have
 
 On the host:
 
-```./launch.sh -t build```
+```bash
+./launch.sh -t build
+
+# give yourself a bigger console
+vga=791
+```
 
 On the vm after booting the gentoo installer:
 
-```
+```bash
+# optionally launch screen or tmux
+
 mkdir -p /mnt/builder
 mount /dev/disk/by-label/builder /mnt/builder
 /mnt/builder/full_install.sh
@@ -25,9 +32,17 @@ mount /dev/disk/by-label/builder /mnt/builder
 
 At this point kick back and relax.  Your image will be ready shortly.  Once everything is done you can halt the vm and test it out by running:
 
-```./launch.sh -t test```
+```bash
+# start the new image (any changes made to the live os will not persist in the image)
+# login with gentoo:gentoo (note these creds are *NOT* baked into the image)
+./launch.sh -t test
+
+# on another terminal
+tail -f log/console.log
+```
 
 # Upload to Openstack
+
 You may shrink the image by using virt-sparify
 
 ```virt-sparsify --compress gentoo.img gentoo-$(date +%Y-%m-%d).img```
@@ -88,11 +103,26 @@ tsc
 uhci_hcd
 i2c_piix4
 virtio-pci
+
+# 2023 update
+nvme{t,of}
+wireguard
+bpf
+virtio drivers (gpu, etc)
+updated filesystem support (ntfs rw, smb server, newer nfs features, etc)
+updated networking support (nftable, iptable, ipset, hashes, etc)
+efi
+systemd
 ```
+
 # LINKS
+
+ * https://distfiles.gentoo.org/experimental/amd64/openstack/
  * http://terrarum.net/blog/creating-a-gentoo-cloud-image.html
  * http://blog.condi.me/base/
  * http://blog.david-jung.net/post/25402391612/testing-cloud-init-forcing-re-run-of-user
  * http://docs.openstack.org/image-guide/content/ch_openstack_images.html
  * https://wiki.ubuntu.com/QemuDiskHotplug
  * https://github.com/prometheanfire/gentoo-cloud-prep
+ * https://docs.openstack.org/nova/latest/user/metadata.html
+
