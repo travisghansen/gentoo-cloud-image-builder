@@ -46,6 +46,7 @@ echo "copying resolv.conf"
 cp --dereference /etc/resolv.conf ${R}/etc
 
 echo "updating portage"
+
 chroot_exec "emerge --sync"
 
 # cleanup bindist issues
@@ -161,3 +162,4 @@ chroot_exec "eix-update"
 chroot_exec "emaint all -f"
 rm -rf ${R}/usr/portage/distfiles/*
 rm -rf ${R}/etc/resolv.conf
+chroot_exec 'echo "Script $0 finished."'
