@@ -43,7 +43,7 @@ tail -f log/console.log
 
 # Upload to Openstack
 
-You may shrink the image by using virt-sparify
+You may shrink the image by using virt-sparsify
 
 ```virt-sparsify --compress gentoo.img gentoo-$(date +%Y-%m-%d).img```
 
